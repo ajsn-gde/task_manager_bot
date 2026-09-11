@@ -17,3 +17,9 @@ class Task(Base):
 DB_URL = "sqlite+aiosqlite:///tasks_management.db"
 engine = create_async_engine(DB_URL, echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
+
+async def init_db(custom_engine=None):
+    """database init and make table"""
+    target_engine = custom_engine or engine
+    async with target_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
