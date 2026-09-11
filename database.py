@@ -39,3 +39,14 @@ async def get_all_tasks_db(custom_session=None):
     async with session_factory() as session:
         result = await session.execute(select(Task))
         return result.scalars().all()
+
+async def delete_task_db(task_id: int, custom_session=None) -> bool:
+    """remove task based on id"""
+    session_factory = custom_session or AsyncSessionLocal
+    async with session_factory() as session:
+        task = await session.get(Task, task_id)
+        if task:
+            await session.delete(task)
+            await session.commit()
+            return True
+        return False
