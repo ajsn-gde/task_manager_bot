@@ -50,3 +50,14 @@ async def delete_task_db(task_id: int, custom_session=None) -> bool:
             await session.commit()
             return True
         return False
+
+async def complete_task_db(task_id: int, custom_session=None) -> bool:
+    """mark task with ID as complete"""
+    session_factory = custom_session or AsyncSessionLocal
+    async with session_factory() as session:
+        task = await session.get(Task, task_id)
+        if task:
+            task.is_completed = True
+            await session.commit()
+            return True
+        return False
