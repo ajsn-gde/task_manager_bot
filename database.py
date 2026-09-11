@@ -32,3 +32,10 @@ async def add_task_db(description: str, custom_session=None) -> int:
         session.add(new_task)
         await session.commit()
         return new_task.id
+
+async def get_all_tasks_db(custom_session=None):
+    """get all task list"""
+    session_factory = custom_session or AsyncSessionLocal
+    async with session_factory() as session:
+        result = await session.execute(select(Task))
+        return result.scalars().all()
