@@ -22,3 +22,16 @@ async def test_complete_task_success():
     tasks = await database.get_all_tasks_db(TestSession)
     assert len(tasks) == 1
     assert tasks[0].is_completed is True
+
+@pytest.mark.asyncio
+async def test_complete_task_not_found():
+    # setup db
+    test_engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    await database.init_db(test_engine)
+    TestSession = async_sessionmaker(test_engine, expire_on_commit=False)
+
+    # update task that is not found
+    is_updated = await database.complete_task_db(999, TestSession)
+
+    # verify must be return false value
+    assert is_updated is False
