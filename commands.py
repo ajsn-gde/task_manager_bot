@@ -50,6 +50,26 @@ class TaskCommands(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name="delete_task")
+    async def delete_task(self, ctx, task_id: int):
+        """delete a task by task_id using embed response."""
+        is_deleted = await database.delete_task_db(task_id)
+
+        if is_deleted:
+            embed = discord.Embed(
+                title="🗑️ Task Deleted",
+                description=f"Task with ID `#{task_id}` has been deleted successfully.",
+                color=discord.Color.dark_gray()
+            )
+        else:
+            embed = discord.Embed(
+                title="⚠️ Task Not Found",
+                description=f"Could not find any task with ID `#{task_id}`.",
+                color=discord.Color.red()
+            )
+
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     # register the cog to the bot instance
     await bot.add_cog(TaskCommands(bot))
