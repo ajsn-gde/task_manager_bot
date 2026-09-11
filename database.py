@@ -23,3 +23,12 @@ async def init_db(custom_engine=None):
     target_engine = custom_engine or engine
     async with target_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+async def add_task_db(description: str, custom_session=None) -> int:
+    """add new task to database"""
+    session_factory = custom_session or AsyncSessionLocal
+    async with session_factory() as session:
+        new_task = Task(description=description)
+        session.add(new_task)
+        await session.commit()
+        return new_task.id
