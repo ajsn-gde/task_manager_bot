@@ -20,3 +20,17 @@ async def test_get_all_tasks_with_data():
     assert len(tasks) == 2
     assert tasks[0].description == "Tugas 1"
     assert tasks[1].description == "Tugas 2"
+
+@pytest.mark.asyncio
+async def test_get_all_tasks_empty():
+    # setup db
+    test_engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    await database.init_db(test_engine)
+    TestSession = async_sessionmaker(test_engine, expire_on_commit=False)
+
+    # take task when db is empty
+    tasks = await database.get_all_tasks_db(TestSession)
+
+    # verify result must be empty list
+    assert len(tasks) == 0
+    assert tasks == []
