@@ -70,6 +70,26 @@ class TaskCommands(commands.Cog):
 
         await ctx.send(embed=embed)
 
+    @commands.command(name="complete_task")
+    async def complete_task(self, ctx, task_id: int):
+        """mark a task as completed by task_id using embed response."""
+        is_updated = await database.complete_task_db(task_id)
+
+        if is_updated:
+            embed = discord.Embed(
+                title="🎉 Task Completed",
+                description=f"Task with ID `#{task_id}` has been marked as complete!",
+                color=discord.Color.gold()
+            )
+        else:
+            embed = discord.Embed(
+                title="⚠️ Task Not Found",
+                description=f"Could not find any task with ID `#{task_id}`.",
+                color=discord.Color.red()
+            )
+
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     # register the cog to the bot instance
     await bot.add_cog(TaskCommands(bot))
